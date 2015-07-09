@@ -129,6 +129,7 @@ public class ConnectorConfig {
     
     private int readTimeout;
     private int connectionTimeout;
+    private int connectionRetries;
     private boolean traceMessage;
     private boolean compression = true;
     private boolean prettyPrintXml;
@@ -315,6 +316,18 @@ public class ConnectorConfig {
      */
     public void setConnectionTimeout(int connectionTimeout) {
         this.connectionTimeout = connectionTimeout;
+    }
+
+    public int getConnectionRetries() {
+        return connectionRetries;
+    }
+
+    /**
+     * sets number of connection retries
+     * @param connectionRetries number of retries
+     */
+    public void setConnectionRetries(int connectionRetries) {
+        this.connectionRetries = connectionRetries;
     }
 
     public boolean isTraceMessage() {
