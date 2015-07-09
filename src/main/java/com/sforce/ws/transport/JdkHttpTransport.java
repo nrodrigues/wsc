@@ -28,6 +28,7 @@ package com.sforce.ws.transport;
 
 import java.io.*;
 import java.net.HttpURLConnection;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.*;
 import java.util.Map.Entry;
@@ -125,15 +126,25 @@ public class JdkHttpTransport implements Transport {
             throws IOException {
         url = new URL(uri);
 
-        connection = createConnection(config, url, httpHeaders, enableCompression);
-        connection.setRequestMethod("POST");
-        connection.setDoInput(true);
-        connection.setDoOutput(true);
-        if (config.useChunkedPost()) {
-            connection.setChunkedStreamingMode(4096);
-        }
+        int retries = config.getConnectionRetries();
+        do {
+            connection = createConnection(config, url, httpHeaders, enableCompression);
+            connection.setRequestMethod("POST");
+            connection.setDoInput(true);
+            connection.setDoOutput(true);
+            if (config.useChunkedPost()) {
+                connection.setChunkedStreamingMode(4096);
+            }
 
-        return connection.getOutputStream();
+            try {
+                return connection.getOutputStream();
+            } catch (SocketTimeoutException e) {
+                if (retries <= 0) {
+                    throw e;
+                }
+            }
+        } while (retries-- > 0);
+        throw new IllegalStateException();
     }
 
     public static HttpURLConnection createConnection(ConnectorConfig config, URL url,

@@ -9,7 +9,7 @@
   <groupId>com.force.api</groupId>
   <artifactId>force-wsc</artifactId>
   <packaging>jar</packaging>
-  <version>33.0.3.te.1</version>
+  <version>34.2.0</version>
   <name>force-wsc</name>
   <description>Force.com Web Service Connector</description>
   <url>http://www.force.com</url>
@@ -57,6 +57,17 @@
       <scope>provided</scope>
     </dependency>
   </dependencies>
+  <profiles>
+    <profile>
+      <id>doclint-java8-disable</id>
+      <activation>
+        <jdk>[1.8,)</jdk>
+      </activation>
+      <properties>
+        <javadoc.opts>-Xdoclint:none</javadoc.opts>
+      </properties>
+    </profile>
+  </profiles>
   <build>
     <resources>
       <resource>
@@ -89,7 +100,6 @@
               <goal>shade</goal>
             </goals>
             <configuration>
-              <finalName>${project.build.finalName}-uber</finalName>
               <relocations>
                 <!-- repackage antlr to prevent namespace collision on classpath in core app -->
                 <relocation>
@@ -107,6 +117,8 @@
                 </relocation>
               </relocations>
               <createDependencyReducedPom>false</createDependencyReducedPom>
+              <shadedArtifactAttached>true</shadedArtifactAttached>
+              <shadedClassifierName>uber</shadedClassifierName>
             </configuration>
           </execution>
         </executions>
@@ -154,6 +166,9 @@
       <plugin>
         <artifactId>maven-javadoc-plugin</artifactId>
         <version>2.7</version>
+        <configuration>
+          <additionalparam>${javadoc.opts}</additionalparam>
+        </configuration>
         <executions>
           <execution>
             <id>attach-javadoc</id>

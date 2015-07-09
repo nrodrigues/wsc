@@ -24,19 +24,11 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.sforce.async;
+package com.sforce.ws.transport;
 
 /**
- * ContentType --
- *
- * @author mcheenath
- * @since 160
+ * Defines an interface for creating Transport instances
  */
-public enum ContentType {
-    XML,
-    CSV,
-    JSON,
-    ZIP_XML,
-    ZIP_CSV,
-    ZIP_JSON
+public interface TransportFactory {
+	public Transport createTransport();
 }
